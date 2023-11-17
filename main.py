@@ -53,8 +53,8 @@ async def create_new_cafe(cafe: dict):
         },
     )
 
-    if response['HTTPStatusCode'] == 200:
-        return {"message": "New cafe created"}
+    if response['ResponseMetadata']['HTTPStatusCode'] == 200:
+        return {"message": f"New cafe {cafe['shop_name']} created"}
 
     return {"message": "Error creating new cafe"}
 
@@ -64,3 +64,21 @@ async def update_cafe():
     """Endpoint for PUT request to update database"""
 
     return {"message": "Cafe has been updated"}
+
+@app.delete("/delete_cafe")
+async def delete_cafe(item: dict):
+    """Endpoint for DELETE request to delete from database"""
+
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table(table_name)
+    response = table.delete_item(
+        Key={
+            'id': item['uuid'],
+            'shop_name': item['shop_name'],
+        },
+    )
+
+    if response['ResponseMetadata']['HTTPStatusCode'] == 200:
+        return {"message": f"Cafe {item['shop_name']} has been deleted"}
+
+    return {"message": f"Error deleting cafe {item['shop_name']}"}
