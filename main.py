@@ -38,6 +38,17 @@ async def root():
     return {"message": "Hello World"}
 
 
+@app.get("/get_cafes")
+async def get_cafes():
+    """Endpoint for GET request to retrieve all cafes"""
+
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table(table_name)
+    response = table.scan(
+        Select='ALL_ATTRIBUTES',
+    )
+    return response['Items']
+
 @app.post("/create_cafe")
 async def create_new_cafe(cafe: dict):
     """Endpoint for POST request to add to database"""
