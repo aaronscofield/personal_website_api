@@ -5,6 +5,7 @@ import json
 import boto3
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 
 app = FastAPI()
 origins = [
@@ -18,6 +19,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+favicon_path = 'favicon.ico'
+
+@app.get('/favicon.ico', include_in_schema=False)
+async def favicon():
+    return FileResponse(favicon_path)
 
 def get_secrets():
     """ Get value of secret from AWS Secrets Manager """
